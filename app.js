@@ -29,7 +29,7 @@ function decodeBarcodeWithFallback(imageData) {
         },
     }, function (quaggaResult) {
         if (quaggaResult && quaggaResult.codeResult) {
-            displayResult(`Barcode (QuaggaJS): ${quaggaResult.codeResult.code}`);
+            checkCountryAndDisplayResult(quaggaResult.codeResult.code);
         } else {
             // Second attempt: Try decoding using ZXing
             decodeBarcodeZXing(imageData);
@@ -44,7 +44,7 @@ function decodeBarcodeZXing(imageData) {
 
     scanner.addListener('scan', function (zxingResult) {
         if (zxingResult) {
-            displayResult(`Barcode (ZXing): ${zxingResult}`);
+            checkCountryAndDisplayResult(zxingResult);
         } else {
             // If both attempts fail, display an error message
             displayResult('Barcode not detected.');
@@ -61,6 +61,22 @@ function decodeBarcodeZXing(imageData) {
             displayResult('No camera available.');
         }
     });
+}
+
+function checkCountryAndDisplayResult(barcode) {
+    // List of restricted countries
+    const blockedCountry = 'Israel';
+
+    // Extract country code from the barcode (assuming it's the first few characters)
+    const countryCode = barcode.substring(0, 2);
+
+    if (countryCode === blockedCountry) {
+        // Display a message for blocked products
+        displayResult('Boycott - Do not purchase!');
+    } else {
+        // Display a message for allowed products
+        displayResult('OK to Purchase.');
+    }
 }
 
 function displayResult(message) {
