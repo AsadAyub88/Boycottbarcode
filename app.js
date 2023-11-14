@@ -9,51 +9,62 @@ function handleFile(event) {
     reader.onload = function (e) {
         const imageData = e.target.result;
 
-        // Use QuaggaJS library for barcode decoding
-        decodeBarcode(imageData);
+        // Try decoding using QuaggaJS, if unsuccessful, try ZXing
+        decodeBarcodeWithFallback(imageData);
     };
 
     reader.readAsDataURL(file);
 }
 
-function decodeBarcode(imageData) {
+function decodeBarcodeWithFallback(imageData) {
+    // First attempt: Try decoding using QuaggaJS
     Quagga.decodeSingle({
         src: imageData,
-        numOfWorkers: 0,  // Setting to 0 to run on the main thread (no web workers)
+        numOfWorkers: 0,
         inputStream: {
-            size: 800  // Adjust this size based on your needs
+            size: 800
         },
         decoder: {
-            readers: ['ean_reader']  // Use 'ean_reader' for EAN-13 barcodes
-            // Add more reader types based on the types of barcodes you expect
+            readers: ['ean_reader']
         },
-    }, function (result) {
-        if (result && result.codeResult) {
-            const barcode = result.codeResult.code;
-            // Check if the scanned product code relates to specific countries
-            checkCountryRestrictions(barcode);
+    }, function (quaggaResult) {
+        if (quaggaResult && quaggaResult.codeResult) {
+            displayResult(`Barcode (QuaggaJS): ${quaggaResult.codeResult.code}`);
         } else {
-            // Handle case when barcode is not detected
-            document.getElementById('result').innerText = 'Barcode not detected.';
+            // Second attempt: Try decoding using ZXing
+            decodeBarcodeZXing(imageData);
         }
     });
 }
 
-function checkCountryRestrictions(barcode) {
-    // List of restricted countries
-    const restrictedCountries = ['EuropeanUnion', 'Australia', 'Israel', 'India', 'USA', 'Canada'];
-    
-    // Extract country code from the barcode (assuming it's the first few characters)
-    const countryCode = barcode.substring(0, 2);
+function decodeBarcodeZXing(imageData) {
+    const scanner = new Instascan.Scanner({
+        video: document.createElement('video')
+    });
 
-    // Check if the country code is in the list of restricted countries
-    if (restrictedCountries.includes(countryCode)) {
-        // Display a message for restricted products
-        document.getElementById('result').innerText = 'Zionist Product - Banned!';
-    } else {
-        // Display a message for allowed products
-        document.getElementById('result').innerText = 'Product is allowed.';
-    }
+    scanner.addListener('scan', function (zxingResult) {
+        if (zxingResult) {
+            displayResult(`Barcode (ZXing): ${zxingResult}`);
+        } else {
+            // If both attempts fail, display an error message
+            displayResult('Barcode not detected.');
+        }
+    });
+
+    // Start the scanner
+    Instascan.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+            scanner.start(cameras[0]);
+            scanner.scan(imageData);  // Pass the image data to ZXing for scanning
+        } else {
+            // If no cameras are available, display an error message
+            displayResult('No camera available.');
+        }
+    });
+}
+
+function displayResult(message) {
+    document.getElementById('result').innerText = message;
 }
 
 function resetScanner() {
