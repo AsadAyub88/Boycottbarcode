@@ -1,24 +1,23 @@
 <!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Meeting Simulation</title>
+    <title>Gallery Access Consent</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Business Meeting Simulation</h1>
-    
-    <label for="agenda">Meeting Agenda:</label>
-    <textarea id="agenda" rows="4" cols="50" placeholder="Enter meeting agenda..."></textarea>
-
-    <label for="participants">Meeting Participants (max 5, comma-separated):</label>
-    <input type="text" id="participants" placeholder="e.g., Participant 1, Participant 2, ...">
-
-    <button onclick="simulateMeeting()">Simulate Meeting</button>
-
-    <div id="transcript"></div>
-
+    <div class="consent-container">
+        <h1>Gallery Access Consent</h1>
+        <p>This website requests access to your gallery to display the last saved image.</p>
+        <button id="consentButton">Grant Consent</button>
+    </div>
+    <div class="gallery-container" style="display: none;">
+        <h2>Last Saved Image</h2>
+        <img id="lastImage" alt="Last Saved Image">
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
