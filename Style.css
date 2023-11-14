@@ -1,0 +1,16 @@
+/* styles.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 20px;
+}
+
+.consent-container, .gallery-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#lastImage {
+    max-width: 100%;
+    max-height: 400px;
+}
