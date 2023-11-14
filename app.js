@@ -1,5 +1,6 @@
 // app.js
 document.getElementById('fileInput').addEventListener('change', handleFile);
+document.getElementById('scanNewProduct').addEventListener('click', resetScanner);
 
 function handleFile(event) {
     const file = event.target.files[0];
@@ -28,11 +29,36 @@ function decodeBarcode(imageData) {
         },
     }, function (result) {
         if (result && result.codeResult) {
-            // Update the result div with the decoded barcode
-            document.getElementById('result').innerText = `Barcode: ${result.codeResult.code}`;
+            const barcode = result.codeResult.code;
+            // Check if the scanned product code relates to specific countries
+            checkCountryRestrictions(barcode);
         } else {
             // Handle case when barcode is not detected
             document.getElementById('result').innerText = 'Barcode not detected.';
         }
     });
+}
+
+function checkCountryRestrictions(barcode) {
+    // List of restricted countries
+    const restrictedCountries = ['EuropeanUnion', 'Australia', 'Israel', 'India', 'USA', 'Canada'];
+    
+    // Extract country code from the barcode (assuming it's the first few characters)
+    const countryCode = barcode.substring(0, 2);
+
+    // Check if the country code is in the list of restricted countries
+    if (restrictedCountries.includes(countryCode)) {
+        // Display a message for restricted products
+        document.getElementById('result').innerText = 'Zionist Product - Banned!';
+    } else {
+        // Display a message for allowed products
+        document.getElementById('result').innerText = 'Product is allowed.';
+    }
+}
+
+function resetScanner() {
+    // Reset the result div
+    document.getElementById('result').innerText = '';
+    // Clear the file input to allow scanning a new product
+    document.getElementById('fileInput').value = '';
 }
