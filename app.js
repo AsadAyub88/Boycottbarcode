@@ -1,4 +1,4 @@
-// script.js
+// frontend/script.js
 function simulateMeeting() {
     const agenda = document.getElementById('agenda').value;
     const participants = document.getElementById('participants').value.split(',').map(participant => participant.trim());
