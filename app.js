@@ -1,41 +1,41 @@
-// frontend/script.js
-function simulateMeeting() {
-    const agenda = document.getElementById('agenda').value;
-    const participants = document.getElementById('participants').value.split(',').map(participant => participant.trim());
+// script.js
 
-    if (agenda === '' || participants.length === 0) {
-        alert('Please fill in the meeting agenda and participants.');
-        return;
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    const consentButton = document.getElementById('consentButton');
+    const galleryContainer = document.querySelector('.gallery-container');
 
-    const transcript = generateTranscript(agenda, participants);
-
-    displayTranscript(transcript);
-}
-
-function generateTranscript(agenda, participants) {
-    const transcript = [];
-
-    transcript.push('** Business Meeting Transcript **');
-    transcript.push(`Agenda: ${agenda}`);
-    transcript.push('Participants: ' + participants.join(', '));
-    transcript.push('---');
-
-    // Simulate meeting discussion (you can customize this part)
-    participants.forEach(participant => {
-        transcript.push(`${participant}: I agree with the agenda.`);
-        transcript.push(`${participant}: Let's discuss item 1.`);
-        transcript.push(`${participant}: I propose...`);
-        // Add more discussion points
+    consentButton.addEventListener('click', () => {
+        // Check for browser compatibility
+        if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
+            // Request access to the user's media (gallery)
+            navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                .then(handleMediaStream)
+                .catch(handleError);
+        } else {
+            alert('Media device access is not supported in this browser.');
+        }
     });
 
-    transcript.push('---');
-    transcript.push('** End of Meeting **');
+    function handleMediaStream(stream) {
+        const videoTrack = stream.getVideoTracks()[0];
 
-    return transcript.join('\n');
-}
+        // Access the last image from the video track
+        const imageCapture = new ImageCapture(videoTrack);
+        imageCapture.grabFrame()
+            .then(displayLastImage)
+            .catch(handleError);
+    }
 
-function displayTranscript(transcript) {
-    const transcriptDiv = document.getElementById('transcript');
-    transcriptDiv.textContent = transcript;
-}
+    function displayLastImage(imageBitmap) {
+        const lastImage = document.getElementById('lastImage');
+        lastImage.src = URL.createObjectURL(imageBitmap);
+
+        // Show the gallery container
+        galleryContainer.style.display = 'block';
+    }
+
+    function handleError(error) {
+        console.error('Error accessing gallery:', error);
+        alert('There was an error accessing your gallery. Please try again.');
+    }
+});
