@@ -4,18 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Scanner</title>
-    <!-- Include QuaggaJS library -->
-    <script src="https://cdn.rawgit.com/serratus/quaggaJS/master/dist/quagga.min.js"></script>
-    <!-- Include ZXing library -->
-    <script src="https://cdn.rawgit.com/zxing-js/instascan/2.0.0-rc.4/instascan.min.js"></script>
+    <title>Business Meeting Simulation</title>
 </head>
 <body>
-    <h1>Product Scanner</h1>
-    <input type="file" accept="image/*" capture="camera" id="fileInput">
-    <div id="result"></div>
-    <button id="scanNewProduct">Scan a New Product</button>
+    <h1>Business Meeting Simulation</h1>
+    
+    <label for="agenda">Meeting Agenda:</label>
+    <textarea id="agenda" rows="4" cols="50" placeholder="Enter meeting agenda..."></textarea>
 
-    <script src="app.js"></script>
+    <label for="participants">Meeting Participants (max 5, comma-separated):</label>
+    <input type="text" id="participants" placeholder="e.g., Participant 1, Participant 2, ...">
+
+    <button onclick="simulateMeeting()">Simulate Meeting</button>
+
+    <div id="transcript"></div>
+
+    <script src="script.js"></script>
 </body>
 </html>
